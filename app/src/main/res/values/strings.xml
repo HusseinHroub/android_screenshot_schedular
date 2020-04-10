@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">AndroidScreenShotSchedular</string>
+    <string-array name="time_units">
+        <item>Second</item>
+        <item>Minute</item>
+        <item>Hour</item>
+    </string-array>
 </resources>
