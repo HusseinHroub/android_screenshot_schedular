@@ -1,5 +1,6 @@
 package com.example.androidscreenshotschedular.service.fake;
 
+import android.content.Context;
 import android.widget.TextView;
 import com.example.androidscreenshotschedular.service.ScreenShotSchedulerService;
 import com.example.androidscreenshotschedular.utils.Constants;
@@ -7,16 +8,18 @@ import com.example.androidscreenshotschedular.utils.TimesConfiguration;
 
 public class FakeSchedulerService implements ScreenShotSchedulerService {
     private TextView feedBackView;
+    private Context context;
 
     @Override
-    public void start(TimesConfiguration timesConfiguration, TextView feedBackView) {
+    public void start(TimesConfiguration timesConfiguration, TextView feedBackView, Context context) {
         this.feedBackView = feedBackView;
+        this.context = context;
         takeScreenShotEach(getTimeInMillieSeconds(timesConfiguration));
 
     }
 
     private void takeScreenShotEach(long timeInMillieSeconds) {
-        ScreenShotProcessScheduler screenShotProcessScheduler = new ScreenShotProcessScheduler(timeInMillieSeconds, feedBackView);
+        ScreenShotProcessScheduler screenShotProcessScheduler = new ScreenShotProcessScheduler(timeInMillieSeconds, feedBackView, context);
         screenShotProcessScheduler.start();
     }
 

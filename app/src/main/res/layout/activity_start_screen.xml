@@ -45,6 +45,6 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="@string/start" android:onClick="startScreenShotInformationActivity"/>
+            android:text="@string/start" android:onClick="startScreenShotInformationActivity" android:enabled="false"/>
 
 </LinearLayout>

@@ -36,7 +36,7 @@ public class ScreenShotsInformationActivity extends AppCompatActivity {
     }
 
     private void startScreenShotSchedulerService() {
-        ScreenShotSchedulerFactory.startScreenSchedulerService(timesConfiguration, getTakenScreenShotsTextView());
+        ScreenShotSchedulerFactory.startScreenSchedulerService(timesConfiguration, getTakenScreenShotsTextView(), this);
     }
 
     private TextView getTakenScreenShotsTextView() {
