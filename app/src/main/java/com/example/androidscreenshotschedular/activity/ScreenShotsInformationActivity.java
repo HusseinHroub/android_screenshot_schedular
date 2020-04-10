@@ -2,12 +2,17 @@ package com.example.androidscreenshotschedular.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.widget.GridView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.androidscreenshotschedular.R;
+import com.example.androidscreenshotschedular.adapter.ImagesAdapter;
 import com.example.androidscreenshotschedular.service.factory.ScreenShotSchedulerFactory;
 import com.example.androidscreenshotschedular.utils.Constants;
 import com.example.androidscreenshotschedular.utils.TimesConfiguration;
+
+import java.io.File;
 
 public class ScreenShotsInformationActivity extends AppCompatActivity {
 
@@ -18,6 +23,7 @@ public class ScreenShotsInformationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_shots_information);
         prepareTimesConfiguration();
+        initializeGridViewImage();
         startScreenShotSchedulerService();
     }
 
@@ -36,10 +42,21 @@ public class ScreenShotsInformationActivity extends AppCompatActivity {
     }
 
     private void startScreenShotSchedulerService() {
-        ScreenShotSchedulerFactory.startScreenSchedulerService(timesConfiguration, getTakenScreenShotsTextView(), this);
+        ScreenShotSchedulerFactory.startScreenSchedulerService(timesConfiguration, getTakenScreenShotsCounterTextView(), this);
     }
 
-    private TextView getTakenScreenShotsTextView() {
-        return findViewById(R.id.taken_screen_shots_text_view);
+    private TextView getTakenScreenShotsCounterTextView() {
+        return findViewById(R.id.taken_screen_shots_counter_text_view);
+    }
+
+    private void initializeGridViewImage() {
+        GridView screenShotsGridView = findViewById(R.id.screen_shots_grid_view);
+        screenShotsGridView.setAdapter(new ImagesAdapter(this, getScreenShotFiles()));
+    }
+
+    private File[] getScreenShotFiles() {
+        File screenShotsDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), Constants.PC_SCREEN_SHOT_DIR);
+        return screenShotsDir.listFiles();
     }
 }

@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class BitMapSaving {
-    private static final String APP_DIR_NAME = "Pc ScreenShots";
     private static int seqCounter = 1;
 
     public static void saveBitMap(Bitmap bitmap) {
@@ -19,7 +18,7 @@ public class BitMapSaving {
     }
 
     private static File makeAndGetRootSavingPath() {
-        File rootSavingPath = getRootSavingPath(APP_DIR_NAME);
+        File rootSavingPath = getRootSavingPath(Constants.PC_SCREEN_SHOT_DIR);
         if (!rootSavingPath.exists())
             rootSavingPath.mkdir();
         return rootSavingPath;
@@ -29,13 +28,17 @@ public class BitMapSaving {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(image);
             ourTestImageBitMap.compress(Bitmap.CompressFormat.PNG, 85, fileOutputStream);
-            fileOutputStream.flush();
-            fileOutputStream.close();
+            cleanOutPutStream(fileOutputStream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void cleanOutPutStream(FileOutputStream fileOutputStream) throws IOException {
+        fileOutputStream.flush();
+        fileOutputStream.close();
     }
 
     private static File getRootSavingPath(String appDirectoryName) {
