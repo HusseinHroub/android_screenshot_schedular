@@ -6,6 +6,8 @@ import android.os.Environment;
 import android.widget.GridView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.androidscreenshotschedular.R;
 import com.example.androidscreenshotschedular.adapter.ImagesAdapter;
 import com.example.androidscreenshotschedular.service.factory.ScreenShotSchedulerFactory;
@@ -50,13 +52,15 @@ public class ScreenShotsInformationActivity extends AppCompatActivity {
     }
 
     private void initializeGridViewImage() {
-        GridView screenShotsGridView = findViewById(R.id.screen_shots_grid_view);
-        screenShotsGridView.setAdapter(new ImagesAdapter(this, getScreenShotFiles()));
+        RecyclerView gridView = findViewById(R.id.grid_view_recycle_view);
+        gridView.setLayoutManager(new GridLayoutManager(this, 5));
+        gridView.setAdapter(new ImagesAdapter(this, getScreenShotFiles()));
     }
 
     private File[] getScreenShotFiles() {
         File screenShotsDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), Constants.PC_SCREEN_SHOT_DIR);
-        return screenShotsDir.listFiles();
+        File[] listOfImages = screenShotsDir.listFiles();
+        return listOfImages == null ? new File[]{} : listOfImages;
     }
 }

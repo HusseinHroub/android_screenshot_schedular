@@ -7,14 +7,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class BitMapSaving {
-    private static int seqCounter = 1;
 
     public static void saveBitMap(Bitmap bitmap) {
         File rootSavingPath = makeAndGetRootSavingPath();
-        File ourImage = new File(rootSavingPath, String.format("image%d.png", seqCounter++));
+        File ourImage = new File(rootSavingPath, getImageNameBasedOnDate());
         writeBitMapToOurImage(bitmap, ourImage);
+    }
+
+    private static String getImageNameBasedOnDate() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy - HH:mm:ss");
+        return String.format("ss%s.png", simpleDateFormat.format(new Date()));
     }
 
     private static File makeAndGetRootSavingPath() {

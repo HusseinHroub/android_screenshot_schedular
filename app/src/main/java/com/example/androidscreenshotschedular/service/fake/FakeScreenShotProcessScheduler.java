@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.example.androidscreenshotschedular.R;
 import com.example.androidscreenshotschedular.utils.BitMapSaving;
 
-public class ScreenShotProcessScheduler implements Runnable {
+public class FakeScreenShotProcessScheduler implements Runnable {
     private long timeInMilliSeconds;
     private Handler postTaskPeriodHandler;
     private TextView feedBackView;
@@ -19,7 +19,7 @@ public class ScreenShotProcessScheduler implements Runnable {
     private Context context;
     private Handler mainUiHandler;
 
-    public ScreenShotProcessScheduler(long timeInMilliSecond, TextView feedBackView, Context context) {
+    public FakeScreenShotProcessScheduler(long timeInMilliSecond, TextView feedBackView, Context context) {
         this.timeInMilliSeconds = timeInMilliSecond;
         this.feedBackView = feedBackView;
         this.context = context;
