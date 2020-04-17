@@ -24,7 +24,7 @@ public class ScreenShotsInformationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_screen_shots_information);
         prepareTimesConfiguration();
         initializeGridViewImage();
-//        startScreenShotSchedulerService();
+        startScreenShotSchedulerService();
     }
 
     private void prepareTimesConfiguration() {
