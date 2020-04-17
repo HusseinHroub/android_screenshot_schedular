@@ -5,10 +5,10 @@ import android.graphics.BitmapFactory;
 
 public class BitMapReading {
 
-    private int desiredImageHeight;
-    private int desiredImageWidth;
+    private float desiredImageHeight;
+    private float desiredImageWidth;
 
-    public BitMapReading(int desiredImageHeight, int desiredImageWidth) {
+    public BitMapReading(float desiredImageHeight, float desiredImageWidth) {
         this.desiredImageHeight = desiredImageHeight;
         this.desiredImageWidth = desiredImageWidth;
     }

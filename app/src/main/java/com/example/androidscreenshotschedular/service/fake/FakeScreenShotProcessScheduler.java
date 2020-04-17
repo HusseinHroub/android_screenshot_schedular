@@ -48,7 +48,7 @@ public class FakeScreenShotProcessScheduler implements Runnable {
 
     private Bitmap getOurTestImageBitMap() {
         return BitmapFactory.decodeResource(context.getResources(),
-                R.drawable.test);
+                R.drawable.gray_color_drawable);
     }
 
     private void sendFeedBackToMainUI() {

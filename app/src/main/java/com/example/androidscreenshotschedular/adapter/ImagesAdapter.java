@@ -8,13 +8,14 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import com.example.androidscreenshotschedular.R;
 import com.example.androidscreenshotschedular.activity.ImageViewActivity;
 import com.example.androidscreenshotschedular.utils.BitMapReading;
+import com.example.androidscreenshotschedular.utils.Cache;
 import com.example.androidscreenshotschedular.utils.Constants;
+import com.example.androidscreenshotschedular.utils.HelperUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,82 +23,105 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
-    private static final int DESIRED_IMAGE_WIDTH = 220;
-    private static final int DESIRED_IMAGE_HEIGHT = 220;
+public class ImagesAdapter extends BaseAdapter {
+    private static final int DESIRED_IMAGE_WIDTH = 90;
+    private static final int DESIRED_IMAGE_HEIGHT = 90;
+    private static final int CACHE_SIZE = 40;
 
-    private List<String> imagesLocation;
-    private BitMapReading bitMapReading;
     private Context context;
-    private Handler handler;
     private ExecutorService executorService;
-    private LayoutInflater mInflater;
+    private Handler handler;
+    private List<String> imagesLocation;
+    private Cache<Bitmap> imageCache;
+    private BitMapReading bitMapReading;
 
     public ImagesAdapter(Context context, File[] imageFiles) {
         this.context = context;
-        imagesLocation = new ArrayList<>();
-        bitMapReading = new BitMapReading(DESIRED_IMAGE_HEIGHT, DESIRED_IMAGE_WIDTH);
-        add(imageFiles);
-        executorService = Executors.newFixedThreadPool(1);
+        executorService = Executors.newFixedThreadPool(5);
         handler = new Handler(Looper.getMainLooper());
-        this.mInflater = LayoutInflater.from(context);
+        imagesLocation = new ArrayList<>();
+        imageCache = new Cache<>(CACHE_SIZE);
+        bitMapReading = new BitMapReading(HelperUtil.dpToPx(context, DESIRED_IMAGE_WIDTH), HelperUtil.dpToPx(context, DESIRED_IMAGE_HEIGHT));
+        addFileStringToImageLocations(imageFiles);
     }
 
-    public void add(File[] imageFiles) {
+    public void addFileStringToImageLocations(File[] imageFiles) {
         for (File imageFile : imageFiles) {
             imagesLocation.add(imageFile.getAbsolutePath());//TODO maybe just use file cuz u need the name of the image? or any extra info
         }
     }
 
-    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.image_item, parent, false);
-        return new ViewHolder(view);
+    public int getCount() {
+        return imagesLocation.size();
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+    public Object getItem(int position) {
+        return null;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
+
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        ImageView imageView;
+        if (convertView == null) {
+            imageView = getImageView();
+        } else {
+            imageView = (ImageView) convertView;
+        }
+
+        setFullViewOnImageViewClick(imageView, position);
+        if (!imageCache.isDataFoundAt(position)) {
+            setImageGrayColor(imageView);
+            loadImage(position, imageView);
+
+        } else {
+            imageView.setImageBitmap(imageCache.getDataAt(position));
+        }
+
+        return imageView;
+    }
+
+    private void setImageGrayColor(ImageView imageView) {
+        imageView.setImageResource(R.drawable.gray_color_drawable);
+    }
+
+    private void loadImage(final int position, final ImageView imageView) {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                final Bitmap imageBitMapFromLocation = bitMapReading.decodeImageFromLocation(imagesLocation.get(position));
+                final Bitmap bitmap = bitMapReading.decodeImageFromLocation(imagesLocation.get(position));
+                imageCache.setDataAt(position, bitmap);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        holder.imageView.setImageBitmap(imageBitMapFromLocation);
+                        imageView.setImageBitmap(bitmap);
                     }
                 });
             }
         });
+
+
     }
 
-    @Override
-    public int getItemCount() {
-        return imagesLocation.size();
+    private void setFullViewOnImageViewClick(ImageView imageView, final int position) {
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ImageViewActivity.class);
+                intent.putExtra(Constants.INTENT_IMAGE_PATH_FOR_FULL_VIEW, imagesLocation.get(position));
+                context.startActivity(intent);
+            }
+        });
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView imageView;
-
-        ViewHolder(View itemView) {
-            super(itemView);
-            imageView = itemView.findViewById(R.id.screen_shot_image_view);
-            setFullViewOnImageViewClick(imageView, getAdapterPosition());
-        }
-
-
-        private void setFullViewOnImageViewClick(ImageView imageView, final int position) {
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, ImageViewActivity.class);
-                    intent.putExtra(Constants.INTENT_IMAGE_PATH_FOR_FULL_VIEW, imagesLocation.get(position));
-                    context.startActivity(intent);
-                }
-            });
-        }
-
+    private ImageView getImageView() {
+        return LayoutInflater.from(context).inflate(R.layout.layout_screen_shot_view, null).findViewById(R.id.screen_shot_image_view);
     }
 
 
