@@ -41,7 +41,7 @@ public class RealScreenShotProcessScheduler {
     }
 
     private HandlerThread startAndGetBackGroundHandlerThread() {
-        HandlerThread handlerThread = new HandlerThread("BackGround Handler");//TODO should be closed when it needs to be closed.
+        HandlerThread handlerThread = new HandlerThread("ImageSchedulerHandler");//TODO should be closed when it needs to be closed.
         handlerThread.start();
         return handlerThread;
     }
@@ -79,16 +79,16 @@ public class RealScreenShotProcessScheduler {
     private void sendRequestForScreenShot() throws IOException {
         byte[] myMessageToServer = "rs".getBytes();
         OutputStream outputStream = clientSocket.getOutputStream();
-        outputStream.write(getLengthInBytes(myMessageToServer.length));
+        outputStream.write(getNumberInBytes(myMessageToServer.length));
         outputStream.write(myMessageToServer);
     }
 
-    private byte[] getLengthInBytes(int myMessageLength) {
+    private byte[] getNumberInBytes(int number) {
         byte[] toSendLenBytes = new byte[4];
-        toSendLenBytes[0] = (byte) (myMessageLength & 0xff);
-        toSendLenBytes[1] = (byte) ((myMessageLength >> 8) & 0xff);
-        toSendLenBytes[2] = (byte) ((myMessageLength >> 16) & 0xff);
-        toSendLenBytes[3] = (byte) ((myMessageLength >> 24) & 0xff);
+        toSendLenBytes[0] = (byte) (number & 0xff);
+        toSendLenBytes[1] = (byte) ((number >> 8) & 0xff);
+        toSendLenBytes[2] = (byte) ((number >> 16) & 0xff);
+        toSendLenBytes[3] = (byte) ((number >> 24) & 0xff);
         return toSendLenBytes;
     }
 

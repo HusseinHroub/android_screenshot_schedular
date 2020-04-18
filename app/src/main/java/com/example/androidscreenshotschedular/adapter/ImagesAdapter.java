@@ -24,8 +24,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ImagesAdapter extends BaseAdapter {
-    private static final int DESIRED_IMAGE_WIDTH = 90;
-    private static final int DESIRED_IMAGE_HEIGHT = 90;
+    private static final int DESIRED_IMAGE_WIDTH_DP = 90;
+    private static final int DESIRED_IMAGE_HEIGHT_DP = 90;
     private static final int CACHE_SIZE = 40;
 
     private Context context;
@@ -41,13 +41,13 @@ public class ImagesAdapter extends BaseAdapter {
         handler = new Handler(Looper.getMainLooper());
         imagesLocation = new ArrayList<>();
         imageCache = new Cache<>(CACHE_SIZE);
-        bitMapReading = new BitMapReading(HelperUtil.dpToPx(context, DESIRED_IMAGE_WIDTH), HelperUtil.dpToPx(context, DESIRED_IMAGE_HEIGHT));
+        bitMapReading = new BitMapReading(HelperUtil.dpToPx(context, DESIRED_IMAGE_WIDTH_DP), HelperUtil.dpToPx(context, DESIRED_IMAGE_HEIGHT_DP));
         addFileStringToImageLocations(imageFiles);
     }
 
     public void addFileStringToImageLocations(File[] imageFiles) {
         for (File imageFile : imageFiles) {
-            imagesLocation.add(imageFile.getAbsolutePath());//TODO maybe just use file cuz u need the name of the image? or any extra info
+            imagesLocation.add(imageFile.getAbsolutePath());
         }
     }
 

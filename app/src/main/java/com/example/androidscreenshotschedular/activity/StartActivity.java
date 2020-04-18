@@ -23,7 +23,7 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start_screen);
         initializeViews();
         initializeTimeUnitsDataInSpinner();
-        checkAndManagePermission();
+        checkAndManageStoragePermission();
     }
 
     private void initializeViews() {
@@ -72,8 +72,8 @@ public class StartActivity extends AppCompatActivity {
         return findViewById(R.id.time_period_edit_text);
     }
 
-    private void checkAndManagePermission() {
-        if (isPermissionIsNotGranted()) {
+    private void checkAndManageStoragePermission() {
+        if (isPermissionNotGranted()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             }
@@ -83,7 +83,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
 
-    private boolean isPermissionIsNotGranted() {
+    private boolean isPermissionNotGranted() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED;
     }
