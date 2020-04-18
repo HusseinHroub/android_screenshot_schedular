@@ -14,7 +14,12 @@ public class Constants {
     public static final int INDEX_HOUR = 2;
     public static final String PC_SCREEN_SHOT_DIR = "Pc ScreenShots";
     public static final String WHO_IS_SERVER_SCHEDULER = "wiss";
+    public static final int UDP_SEND_PORT = 8889;
+    public static final int UDP_REC_PORT = 9000;
+    public static final int TCP_PORT = 8888;
 
+    public static final String ACK_CODE = "ack141";
+    public static final String SHARED_PREF_NAME = "com.example.androidscreenshotschedularShared";
 
     private Constants() {
 

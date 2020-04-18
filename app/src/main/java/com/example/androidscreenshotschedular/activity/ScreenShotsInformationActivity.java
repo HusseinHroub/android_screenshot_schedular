@@ -60,4 +60,11 @@ public class ScreenShotsInformationActivity extends AppCompatActivity {
         File[] listOfImages = screenShotsDir.listFiles();
         return listOfImages == null ? new File[]{} : listOfImages;
     }
+
+    @Override
+    public void finish() {
+        ScreenShotSchedulerFactory.closeProcessor();
+        super.finish();
+    }
+
 }

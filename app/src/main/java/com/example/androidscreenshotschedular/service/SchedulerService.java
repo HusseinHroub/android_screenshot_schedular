@@ -6,4 +6,5 @@ import com.example.androidscreenshotschedular.utils.TimesConfiguration;
 
 public interface SchedulerService {
     void start(TimesConfiguration timesConfiguration, TextView feedBackView, Context context);
+    void close();
 }

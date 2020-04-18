@@ -1,7 +1,6 @@
 package com.example.androidscreenshotschedular.activity;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,9 +8,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.androidscreenshotschedular.R;
 import com.example.androidscreenshotschedular.utils.Constants;
+import com.example.androidscreenshotschedular.utils.HelperUtil;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -36,24 +39,24 @@ public class ConnectionActivity extends AppCompatActivity {
         searchingFeedBack = findViewById(R.id.searching_feedback_text_view);
         loading = findViewById(R.id.loading_progress_bar);
         connectButton = findViewById(R.id.connect_button);
-//        SharedPreferences mySharedPrefrence = getPreferences(Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = mySharedPrefrence.edit();
-//        editor.putString(Constants.SHARED_PREF_SERVER_IP_ADDRESS, "192.168.1.0");
-//        editor.apply();
-
-
-        connectInThread();
+        manageConnection();
 
     }
 
-    private void connectInThread() {
+    private void manageConnection() {
+        if (HelperUtil.getServerIpAddress(this).isEmpty()) {
+            findServerIpInNewThread();
+        } else {
+            startStarterActivity();
+        }
+    }
+
+    private void findServerIpInNewThread() {
         attemptCounter = 0;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (getServerIpAddress().isEmpty()) {
-                    managePacketSendRead();
-                }
+                managePacketSendRec();
             }
         }).start();
     }
@@ -62,30 +65,49 @@ public class ConnectionActivity extends AppCompatActivity {
         connectButton.setEnabled(false);
         loading.setVisibility(View.VISIBLE);
         searchingFeedBack.setText("Searching for server");
-        connectInThread();
+        manageConnection();
     }
 
-    private void managePacketSendRead() {
+    private void managePacketSendRec() {
+        DatagramSocket socket = null;
         try {
-            DatagramSocket socket = new DatagramSocket();
-            sendToBroadCast(socket);
-            String packetString = receivePacketAndGetString(socket);
+            socket = new DatagramSocket(Constants.UDP_REC_PORT);
+            sendPacketAndHandleRec(socket);
         } catch (SocketTimeoutException e) {
+            socket.close();
             manageConnectAttempts();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private void sendPacketAndHandleRec(DatagramSocket socket) throws IOException {
+        sendToBroadCast(socket);
+        handleIfFromServer(receivePacketInfo(socket));
+    }
+
+    private void handleIfFromServer(PacketInfo packetInfo) {
+        if (packetInfo.equals(Constants.ACK_CODE)) {
+            HelperUtil.saveIpAddress(this, packetInfo.getIpAddress());
+            startStarterActivity();
+        }
+    }
+
+    private void startStarterActivity() {
+        Intent intent = new Intent(this, StartActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private void manageConnectAttempts() {
         if (++attemptCounter < MAXIMUM_ATTEMPTS_OF_CONNECT) {
             reTrySearch();
         } else {
-            showFailedFindingServerToClient();
+            showFailedFindingServer();
         }
     }
 
-    private void showFailedFindingServerToClient() {
+    private void showFailedFindingServer() {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -103,27 +125,49 @@ public class ConnectionActivity extends AppCompatActivity {
                 searchingFeedBack.setText(String.format("Re searching for server (%s)", attemptCounter));
             }
         });
-        managePacketSendRead();
+        managePacketSendRec();
     }
 
-    private String receivePacketAndGetString(DatagramSocket socket) throws IOException {
+    private PacketInfo receivePacketInfo(DatagramSocket socket) throws IOException {
         byte[] recBuffer = new byte[1024];
         DatagramPacket dataGramPacketRead = new DatagramPacket(recBuffer, recBuffer.length);
         socket.setSoTimeout(3000);
         socket.receive(dataGramPacketRead);
-        socket.close();
-        return new String(dataGramPacketRead.getData(), 0, dataGramPacketRead.getLength());
+        return new PacketInfo(dataGramPacketRead);
 
     }
 
     private void sendToBroadCast(DatagramSocket socket) throws IOException {
         byte[] buffer = Constants.WHO_IS_SERVER_SCHEDULER.getBytes();
-        DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length, InetAddress.getByName("192.168.1.255"), 8888);
+        DatagramPacket packetToSend = new DatagramPacket(buffer, buffer.length,
+                InetAddress.getByName("192.168.1.255"), Constants.UDP_SEND_PORT);
         socket.send(packetToSend);
     }
 
-    private String getServerIpAddress() {
-        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        return sharedPreferences.getString(Constants.SHARED_PREF_SERVER_IP_ADDRESS, "");
+    private class PacketInfo {
+        private String packetContent;
+        private String ipAddress;
+
+        public PacketInfo(DatagramPacket datagramPacket) {
+            this.packetContent = new String(datagramPacket.getData(),
+                    0,
+                    datagramPacket.getLength());
+            this.ipAddress = datagramPacket.getAddress().toString();
+        }
+
+        public String getPacketContent() {
+            return packetContent;
+        }
+
+        public String getIpAddress() {
+            return ipAddress;
+        }
+
+
+        @Override
+        public boolean equals(@Nullable Object obj) {
+            return packetContent.equals(obj);
+        }
     }
+
 }

@@ -18,6 +18,11 @@ public class FakeSchedulerService implements SchedulerService {
 
     }
 
+    @Override
+    public void close() {
+
+    }
+
     private void takeScreenShotEach(long timeInMillieSeconds) {
         FakeScreenShotProcessScheduler fakeScreenShotProcessScheduler = new FakeScreenShotProcessScheduler(timeInMillieSeconds, feedBackView, context);
         fakeScreenShotProcessScheduler.start();

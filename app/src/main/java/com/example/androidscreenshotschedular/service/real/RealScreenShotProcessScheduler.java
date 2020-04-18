@@ -8,8 +8,12 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.widget.TextView;
+
 import com.example.androidscreenshotschedular.utils.BitMapSaving;
+import com.example.androidscreenshotschedular.utils.Constants;
+import com.example.androidscreenshotschedular.utils.HelperUtil;
 import com.example.androidscreenshotschedular.utils.TasksHandler;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -20,6 +24,7 @@ import java.net.Socket;
 public class RealScreenShotProcessScheduler {
     private long timeInMilliSeconds;
     private TasksHandler postTasksHandler;
+    private HandlerThread handlerThread;
     private TextView feedBackView;
     private Context context;
     private int counter;
@@ -41,7 +46,7 @@ public class RealScreenShotProcessScheduler {
     }
 
     private HandlerThread startAndGetBackGroundHandlerThread() {
-        HandlerThread handlerThread = new HandlerThread("ImageSchedulerHandler");//TODO should be closed when it needs to be closed.
+        handlerThread = new HandlerThread("ImageSchedulerHandler");//TODO should be closed when it needs to be closed.
         handlerThread.start();
         return handlerThread;
     }
@@ -52,7 +57,7 @@ public class RealScreenShotProcessScheduler {
             @Override
             public void run() {
                 try {
-                    clientSocket = new Socket("192.168.1.176", 8888);
+                    clientSocket = new Socket(HelperUtil.getServerIpAddress(context), Constants.TCP_PORT);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -117,5 +122,9 @@ public class RealScreenShotProcessScheduler {
         });
     }
 
-
+    public void stop() {
+        if (handlerThread != null) {
+            handlerThread.quit();
+        }
+    }
 }
