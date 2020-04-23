@@ -17,6 +17,7 @@ public class TasksHandler extends Handler {
             @Override
             public void run() {
                 runnable.run();
+                HelperUtil.printLog("TasksHandler.run: nice finished okay wonderful repeating");//TODO remove
                 postDelayed(this, timeInMilliSeconds);
             }
         }, timeInMilliSeconds);

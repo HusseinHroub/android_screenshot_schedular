@@ -46,7 +46,8 @@ public class RealScreenShotProcessScheduler {
     }
 
     private HandlerThread startAndGetBackGroundHandlerThread() {
-        handlerThread = new HandlerThread("ImageSchedulerHandler");//TODO should be closed when it needs to be closed.
+        HelperUtil.printLog("RealScreenShotProcessScheduler.stop thread initialized");//TODO remove
+        handlerThread = new HandlerThread("ImageSchedulerHandler");
         handlerThread.start();
         return handlerThread;
     }
@@ -58,6 +59,7 @@ public class RealScreenShotProcessScheduler {
             public void run() {
                 try {
                     clientSocket = new Socket(HelperUtil.getServerIpAddress(context), Constants.TCP_PORT);
+                    HelperUtil.printLog("RealScreenShotProcessScheduler.run: Connected to server");//TODO remove
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -70,6 +72,7 @@ public class RealScreenShotProcessScheduler {
             @Override
             public void run() {
                 try {
+                    HelperUtil.printLog("RealScreenShotProcessScheduler.run: Okay so posting task each");//TODO remove
                     sendRequestForScreenShot();
                     BitMapSaving.saveBitMap(getPcScreenShotBitMap());
                     sendFeedBackToMainUI();
@@ -125,6 +128,18 @@ public class RealScreenShotProcessScheduler {
     public void stop() {
         if (handlerThread != null) {
             handlerThread.quit();
+            handlerThread = null;
+            HelperUtil.printLog("RealScreenShotProcessScheduler.stop thread stopped");//TODO remove
+        }
+
+        if (clientSocket != null) {
+            try {
+                clientSocket.close();
+                HelperUtil.printLog("RealScreenShotProcessScheduler.stop closed client socket");//TODO remove
+                clientSocket = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

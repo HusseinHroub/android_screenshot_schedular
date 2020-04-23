@@ -10,6 +10,7 @@ import com.example.androidscreenshotschedular.R;
 import com.example.androidscreenshotschedular.adapter.ImagesAdapter;
 import com.example.androidscreenshotschedular.service.factory.ScreenShotSchedulerFactory;
 import com.example.androidscreenshotschedular.utils.Constants;
+import com.example.androidscreenshotschedular.utils.HelperUtil;
 import com.example.androidscreenshotschedular.utils.TimesConfiguration;
 
 import java.io.File;
@@ -62,9 +63,9 @@ public class ScreenShotsInformationActivity extends AppCompatActivity {
     }
 
     @Override
-    public void finish() {
+    protected void onPause() {
+        HelperUtil.printLog("ScreenShotsInformationActivity.onPause");//TODO remove
         ScreenShotSchedulerFactory.closeProcessor();
-        super.finish();
+        super.onPause();
     }
-
 }

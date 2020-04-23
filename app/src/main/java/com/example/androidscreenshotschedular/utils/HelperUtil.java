@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 public class HelperUtil {
 
+    private static final boolean IS_LOG_ENABLED = true;
     private static String cachedIpAddress = "";
 
     public static float dpToPx(Context context, float dp) {
@@ -29,6 +30,13 @@ public class HelperUtil {
 
     public static SharedPreferences getSharedPref(Context context) {
         return context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+    }
+
+    public static void printLog(String message) {
+        if (IS_LOG_ENABLED) {
+            System.out.println(message);
+        }
+
     }
 
 }
