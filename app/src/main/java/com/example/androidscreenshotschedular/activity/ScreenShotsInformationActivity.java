@@ -63,7 +63,7 @@ public class ScreenShotsInformationActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
+    public void finish() {
         HelperUtil.printLog("ScreenShotsInformationActivity.onPause");//TODO remove
         ScreenShotSchedulerFactory.closeProcessor();
         super.onPause();

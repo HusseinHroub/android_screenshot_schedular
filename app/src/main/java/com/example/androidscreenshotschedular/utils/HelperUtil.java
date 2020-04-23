@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 public class HelperUtil {
 
-    private static final boolean IS_LOG_ENABLED = true;
+    private static final boolean IS_LOG_ENABLED = false;
     private static String cachedIpAddress = "";
 
     public static float dpToPx(Context context, float dp) {
