@@ -29,13 +29,10 @@ public class ServerSearchService {
 
     public void startSearchingInNewThread() {
         attemptCounter = 0;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                managePacketSendRec();
-                socket.close();
-                HelperUtil.printLog("Okay closed socket of UDP!!!!!");
-            }
+        new Thread(() -> {
+            managePacketSendRec();
+            socket.close();
+            HelperUtil.printLog("Okay closed socket of UDP!!!!!");
         }).start();
     }
 
@@ -93,12 +90,7 @@ public class ServerSearchService {
     private void handleAttemptsCounter() {
         if (searchHandler != null) {
             Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    searchHandler.onReTryAttempt(attemptCounter);
-                }
-            });
+            handler.post(() -> searchHandler.onReTryAttempt(attemptCounter));
         }
 
     }

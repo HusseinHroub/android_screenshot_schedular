@@ -92,31 +92,20 @@ public class ImagesAdapter extends BaseAdapter {
     }
 
     private void loadImage(final int position, final ImageView imageView) {
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                final Bitmap bitmap = bitMapReading.decodeImageFromLocation(imagesLocation.get(position));
-                imageCache.setDataAt(position, bitmap);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        imageView.setImageBitmap(bitmap);
-                    }
-                });
-            }
+        executorService.execute(() -> {
+            final Bitmap bitmap = bitMapReading.decodeImageFromLocation(imagesLocation.get(position));
+            imageCache.setDataAt(position, bitmap);
+            handler.post(() -> imageView.setImageBitmap(bitmap));
         });
 
 
     }
 
     private void setFullViewOnImageViewClick(ImageView imageView, final int position) {
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ImageViewActivity.class);
-                intent.putExtra(Constants.INTENT_IMAGE_PATH_FOR_FULL_VIEW, imagesLocation.get(position));
-                context.startActivity(intent);
-            }
+        imageView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ImageViewActivity.class);
+            intent.putExtra(Constants.INTENT_IMAGE_PATH_FOR_FULL_VIEW, imagesLocation.get(position));
+            context.startActivity(intent);
         });
     }
 

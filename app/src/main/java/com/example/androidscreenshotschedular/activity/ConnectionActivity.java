@@ -58,35 +58,22 @@ public class ConnectionActivity extends AppCompatActivity {
         initOnServerFoundListener(serverSearchService);
     }
 
-    private void initOnServerFoundListener(ServerSearchService serverSearchService) {
-        serverSearchService.setOnServerFoundListener(new ServerSearchService.Found() {
-            @Override
-            public void onServerFound() {
-                startStarterActivity();
-            }
-        });
-    }
-
     private void initNewSearchAttemptListener(ServerSearchService serverSearchService) {
-        serverSearchService.setOnNewSearchAttemptListener(new ServerSearchService.Search() {
-            @Override
-            public void onReTryAttempt(int attemptCounter) {
-                searchingFeedBack.setText(String.format("Re searching for server (%s)", attemptCounter));
-            }
-        });
+        serverSearchService.setOnNewSearchAttemptListener(attemptCounter ->
+                searchingFeedBack.setText(String.format("Re searching for server (%s)", attemptCounter)));
     }
 
     private void initSearchFailListener(ServerSearchService serverSearchService) {
-        serverSearchService.setOnSearchFailListener(new Runnable() {
-            @Override
-            public void run() {
-                loading.setVisibility(View.GONE);
-                searchingFeedBack.setText("Couldn't find server");
-                connectButton.setEnabled(true);
-            }
+        serverSearchService.setOnSearchFailListener(() -> {
+            loading.setVisibility(View.GONE);
+            searchingFeedBack.setText("Couldn't find server");
+            connectButton.setEnabled(true);
         });
     }
 
+    private void initOnServerFoundListener(ServerSearchService serverSearchService) {
+        serverSearchService.setOnServerFoundListener(() -> startStarterActivity());
+    }
 
     public void connect(View connectButton) {
         connectButton.setEnabled(false);
@@ -97,8 +84,7 @@ public class ConnectionActivity extends AppCompatActivity {
 
 
     private void startStarterActivity() {
-        Intent intent = new Intent(this, StartActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, StartActivity.class));
         finish();
     }
 

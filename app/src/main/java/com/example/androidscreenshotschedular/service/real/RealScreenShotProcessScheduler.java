@@ -23,7 +23,6 @@ import java.net.Socket;
 
 public class RealScreenShotProcessScheduler {
     private long timeInMilliSeconds;
-    private TasksHandler postTasksHandler;
     private HandlerThread handlerThread;
     private TextView feedBackView;
     private Context context;
@@ -40,7 +39,7 @@ public class RealScreenShotProcessScheduler {
     }
 
     public void start() {
-        postTasksHandler = new TasksHandler(startAndGetBackGroundHandlerThread().getLooper());
+        TasksHandler postTasksHandler = new TasksHandler(startAndGetBackGroundHandlerThread().getLooper());
         postTasksHandler.postTask(getConnectToServerTask());
         postTasksHandler.postTaskEach(getProcessTask(), timeInMilliSeconds);
     }
@@ -54,33 +53,27 @@ public class RealScreenShotProcessScheduler {
 
 
     private Runnable getConnectToServerTask() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    clientSocket = new Socket(HelperUtil.getServerIpAddress(context), Constants.TCP_PORT);
-                    HelperUtil.printLog("RealScreenShotProcessScheduler.run: Connected to server");//TODO remove
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        return () -> {
+            try {
+                clientSocket = new Socket(HelperUtil.getServerIpAddress(context), Constants.TCP_PORT);
+                HelperUtil.printLog("RealScreenShotProcessScheduler.run: Connected to server");//TODO remove
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         };
     }
 
     private Runnable getProcessTask() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    HelperUtil.printLog("RealScreenShotProcessScheduler.run: Okay so posting task each");//TODO remove
-                    sendRequestForScreenShot();
-                    BitMapSaving.saveBitMap(getPcScreenShotBitMap());
-                    sendFeedBackToMainUI();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+        return () -> {
+            try {
+                HelperUtil.printLog("RealScreenShotProcessScheduler.run: Okay so posting task each");//TODO remove
+                sendRequestForScreenShot();
+                BitMapSaving.saveBitMap(getPcScreenShotBitMap());
+                sendFeedBackToMainUI();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
         };
     }
 
@@ -116,12 +109,9 @@ public class RealScreenShotProcessScheduler {
     }
 
     private void sendFeedBackToMainUI() {
-        mainUiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                counter++;
-                feedBackView.setText("" + counter);
-            }
+        mainUiHandler.post(() -> {
+            counter++;
+            feedBackView.setText("" + counter);
         });
     }
 

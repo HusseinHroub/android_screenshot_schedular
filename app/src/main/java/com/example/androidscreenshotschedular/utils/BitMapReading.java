@@ -41,7 +41,7 @@ public class BitMapReading {
 
     private int getInSampleSize(int height, int width) {
         return width > height ?
-                Math.round((float) height / (float) desiredImageHeight) :
-                Math.round((float) width / (float) desiredImageWidth);
+                Math.round((float) height / desiredImageHeight) :
+                Math.round((float) width / desiredImageWidth);
     }
 }

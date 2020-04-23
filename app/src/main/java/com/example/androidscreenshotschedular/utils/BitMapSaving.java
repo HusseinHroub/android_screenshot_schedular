@@ -24,7 +24,7 @@ public class BitMapSaving {
     }
 
     private static File makeAndGetRootSavingPath() {
-        File rootSavingPath = getRootSavingPath(Constants.PC_SCREEN_SHOT_DIR);
+        File rootSavingPath = getRootSavingPath();
         if (!rootSavingPath.exists())
             rootSavingPath.mkdir();
         return rootSavingPath;
@@ -47,8 +47,8 @@ public class BitMapSaving {
         fileOutputStream.close();
     }
 
-    private static File getRootSavingPath(String appDirectoryName) {
+    private static File getRootSavingPath() {
         return new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), appDirectoryName);
+                Environment.DIRECTORY_PICTURES), Constants.PC_SCREEN_SHOT_DIR);
     }
 }

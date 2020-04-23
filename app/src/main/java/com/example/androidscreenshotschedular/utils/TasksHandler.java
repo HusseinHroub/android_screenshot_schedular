@@ -13,13 +13,10 @@ public class TasksHandler extends Handler {
     }
 
     public void postTaskEach(final Runnable runnable, final long timeInMilliSeconds) {
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                runnable.run();
-                HelperUtil.printLog("TasksHandler.run: nice finished okay wonderful repeating");//TODO remove
-                postDelayed(this, timeInMilliSeconds);
-            }
+        postDelayed(() -> {
+            runnable.run();
+            HelperUtil.printLog("TasksHandler.run: nice finished okay wonderful repeating");//TODO remove
+            postDelayed((Runnable) this, timeInMilliSeconds);
         }, timeInMilliSeconds);
     }
 
