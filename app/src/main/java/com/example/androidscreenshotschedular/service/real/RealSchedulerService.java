@@ -1,22 +1,18 @@
 package com.example.androidscreenshotschedular.service.real;
 
-import android.content.Context;
-import android.widget.TextView;
-
+import com.example.androidscreenshotschedular.action.ConnectionAcknowledgment;
 import com.example.androidscreenshotschedular.service.SchedulerService;
 import com.example.androidscreenshotschedular.utils.Constants;
 import com.example.androidscreenshotschedular.utils.TimesConfiguration;
 
 public class RealSchedulerService implements SchedulerService {
     private RealScreenShotProcessScheduler realScreenShotProcessScheduler;
-    private TextView feedBackView;
-    private Context context;
+    private ConnectionAcknowledgment connectionAcknowledgment;
 
 
     @Override
-    public void start(TimesConfiguration timesConfiguration, TextView feedBackView, Context context) {
-        this.feedBackView = feedBackView;
-        this.context = context;
+    public void start(TimesConfiguration timesConfiguration , ConnectionAcknowledgment connectionAcknowledgment) {
+        this.connectionAcknowledgment = connectionAcknowledgment;
         takeScreenShotEach(getTimeInMillieSeconds(timesConfiguration));
 
     }
@@ -28,7 +24,7 @@ public class RealSchedulerService implements SchedulerService {
 
     private void takeScreenShotEach(long timeInMillieSeconds) {
         stopProcessIfNotNull();
-        realScreenShotProcessScheduler = new RealScreenShotProcessScheduler(timeInMillieSeconds, feedBackView, context);
+        realScreenShotProcessScheduler = new RealScreenShotProcessScheduler(timeInMillieSeconds, connectionAcknowledgment);
         realScreenShotProcessScheduler.start();
     }
 

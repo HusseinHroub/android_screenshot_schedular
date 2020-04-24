@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 public class HelperUtil {
 
-    private static final boolean IS_LOG_ENABLED = false;
+    private static final boolean IS_LOG_ENABLED = true;
     private static String cachedIpAddress = "";
 
     public static float dpToPx(Context context, float dp) {
@@ -21,7 +21,11 @@ public class HelperUtil {
     }
 
     public static void saveIpAddress(Context context, String ipAddress) {
-        cachedIpAddress = ipAddress.substring(1);
+        if (!ipAddress.isEmpty()) {
+            cachedIpAddress = ipAddress.substring(1);
+        } else {
+            cachedIpAddress = ipAddress;
+        }
         SharedPreferences mySharedPreference = getSharedPref(context);
         SharedPreferences.Editor editor = mySharedPreference.edit();
         editor.putString(Constants.SHARED_PREF_SERVER_IP_ADDRESS, cachedIpAddress);

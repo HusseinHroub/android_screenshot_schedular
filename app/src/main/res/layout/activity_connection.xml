@@ -25,5 +25,5 @@
             android:text="Connect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/connect_button" android:enabled="false" android:onClick="connect"/>
+            android:id="@+id/connect_button" android:enabled="false" android:onClick="connectToServiceButtonAction"/>
 </LinearLayout>

@@ -1,12 +1,17 @@
 package com.example.androidscreenshotschedular.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.androidscreenshotschedular.R;
+import com.example.androidscreenshotschedular.action.ConnectionAcknowledgment;
 import com.example.androidscreenshotschedular.adapter.ImagesAdapter;
 import com.example.androidscreenshotschedular.service.factory.ScreenShotSchedulerFactory;
 import com.example.androidscreenshotschedular.utils.Constants;
@@ -15,14 +20,16 @@ import com.example.androidscreenshotschedular.utils.TimesConfiguration;
 
 import java.io.File;
 
-public class ScreenShotsInformationActivity extends AppCompatActivity {
+public class ScreenShotsInformationActivity extends AppCompatActivity implements ConnectionAcknowledgment {
 
     private TimesConfiguration timesConfiguration;
+    private TextView takenScreenShotTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_shots_information);
+        takenScreenShotTextView = getTakenScreenShotsCounterTextView();
         prepareTimesConfiguration();
         initializeGridViewImage();
         startScreenShotSchedulerService();
@@ -43,7 +50,7 @@ public class ScreenShotsInformationActivity extends AppCompatActivity {
     }
 
     private void startScreenShotSchedulerService() {
-        ScreenShotSchedulerFactory.startScreenSchedulerService(timesConfiguration, getTakenScreenShotsCounterTextView(), this);
+        ScreenShotSchedulerFactory.startScreenSchedulerService(timesConfiguration, this);
     }
 
     private TextView getTakenScreenShotsCounterTextView() {
@@ -63,9 +70,31 @@ public class ScreenShotsInformationActivity extends AppCompatActivity {
     }
 
     @Override
-    public void finish() {
-        HelperUtil.printLog("ScreenShotsInformationActivity.onPause");//TODO remove
+    protected void onDestroy() {
+        HelperUtil.printLog("ScreenShotsInformationActivity.destroy");
         ScreenShotSchedulerFactory.closeProcessor();
-        super.onPause();
+        super.onDestroy();
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    public void onConnectionFail() {
+        Toast.makeText(this, "Lost connection to server!", Toast.LENGTH_SHORT).show();
+        HelperUtil.saveIpAddress(this, "");
+        startConnectionActivity();
+    }
+
+    @Override
+    public void onScreenShotTaken(int numberOfScreenShots) {
+        takenScreenShotTextView.setText("" + numberOfScreenShots);
+    }
+
+    private void startConnectionActivity() {
+        startActivity(new Intent(this, ConnectionActivity.class));
+        finishAffinity();
     }
 }

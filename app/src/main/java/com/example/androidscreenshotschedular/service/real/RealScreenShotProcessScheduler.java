@@ -1,14 +1,13 @@
 package com.example.androidscreenshotschedular.service.real;
 
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.widget.TextView;
 
+import com.example.androidscreenshotschedular.action.ConnectionAcknowledgment;
 import com.example.androidscreenshotschedular.utils.BitMapSaving;
 import com.example.androidscreenshotschedular.utils.Constants;
 import com.example.androidscreenshotschedular.utils.HelperUtil;
@@ -19,27 +18,28 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class RealScreenShotProcessScheduler {
+    private static final int CONNECTION_TIME_OUT = 4000;
     private long timeInMilliSeconds;
     private HandlerThread handlerThread;
-    private TextView feedBackView;
-    private Context context;
+    private ConnectionAcknowledgment connectionAcknowledgment;
     private int counter;
     private Handler mainUiHandler;
     private Socket clientSocket;
+    private TasksHandler postTasksHandler;
 
-    public RealScreenShotProcessScheduler(long timeInMilliSecond, TextView feedBackView, Context context) {
+    public RealScreenShotProcessScheduler(long timeInMilliSecond, ConnectionAcknowledgment connectionAcknowledgment) {
         this.timeInMilliSeconds = timeInMilliSecond;
-        this.feedBackView = feedBackView;
-        this.context = context;
+        this.connectionAcknowledgment = connectionAcknowledgment;
         mainUiHandler = new Handler(Looper.getMainLooper());
+        postTasksHandler = new TasksHandler(startAndGetBackGroundHandlerThread().getLooper());
 
     }
 
     public void start() {
-        TasksHandler postTasksHandler = new TasksHandler(startAndGetBackGroundHandlerThread().getLooper());
         postTasksHandler.postTask(getConnectToServerTask());
         postTasksHandler.postTaskEach(getProcessTask(), timeInMilliSeconds);
     }
@@ -55,12 +55,20 @@ public class RealScreenShotProcessScheduler {
     private Runnable getConnectToServerTask() {
         return () -> {
             try {
-                clientSocket = new Socket(HelperUtil.getServerIpAddress(context), Constants.TCP_PORT);
+                connectToServer();
                 HelperUtil.printLog("RealScreenShotProcessScheduler.run: Connected to server");//TODO remove
             } catch (IOException e) {
                 e.printStackTrace();
+                manageFailConnection();
             }
         };
+    }
+
+
+    private void connectToServer() throws IOException {
+        clientSocket = new Socket();
+        clientSocket.connect(new InetSocketAddress(HelperUtil.getServerIpAddress(connectionAcknowledgment.getContext()),
+                Constants.TCP_PORT), CONNECTION_TIME_OUT);
     }
 
     private Runnable getProcessTask() {
@@ -72,6 +80,7 @@ public class RealScreenShotProcessScheduler {
                 sendFeedBackToMainUI();
             } catch (IOException e) {
                 e.printStackTrace();
+                manageFailConnection();
             }
 
         };
@@ -109,10 +118,15 @@ public class RealScreenShotProcessScheduler {
     }
 
     private void sendFeedBackToMainUI() {
-        mainUiHandler.post(() -> {
-            counter++;
-            feedBackView.setText("" + counter);
-        });
+        counter++;
+        mainUiHandler.post(() -> connectionAcknowledgment.onScreenShotTaken(counter));
+    }
+
+    private void manageFailConnection() {
+        mainUiHandler.post(() -> connectionAcknowledgment.onConnectionFail());
+        stop();
+        postTasksHandler.stopRepetitiveTask();
+
     }
 
     public void stop() {

@@ -47,7 +47,6 @@ public class ServerSearchService {
 
     }
 
-
     private void sendPacketAndHandleRec(DatagramSocket socket) throws IOException {
         sendToBroadCast(socket);
         handleIfFromServer(receivePacketInfo(socket));

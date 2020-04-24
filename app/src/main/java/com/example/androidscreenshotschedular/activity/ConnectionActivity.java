@@ -75,7 +75,7 @@ public class ConnectionActivity extends AppCompatActivity {
         serverSearchService.setOnServerFoundListener(() -> startStarterActivity());
     }
 
-    public void connect(View connectButton) {
+    public void connectToServiceButtonAction(View connectButton) {
         connectButton.setEnabled(false);
         loading.setVisibility(View.VISIBLE);
         searchingFeedBack.setText("Searching for server");
@@ -87,6 +87,5 @@ public class ConnectionActivity extends AppCompatActivity {
         startActivity(new Intent(this, StartActivity.class));
         finish();
     }
-
 
 }
