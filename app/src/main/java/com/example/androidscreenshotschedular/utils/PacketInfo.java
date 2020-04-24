@@ -15,14 +15,9 @@ public class PacketInfo {
         this.ipAddress = datagramPacket.getAddress().toString();
     }
 
-    public String getPacketContent() {
-        return packetContent;
-    }
-
     public String getIpAddress() {
         return ipAddress;
     }
-
 
     @Override
     public boolean equals(@Nullable Object obj) {
