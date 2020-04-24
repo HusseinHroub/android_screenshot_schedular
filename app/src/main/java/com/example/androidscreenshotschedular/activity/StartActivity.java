@@ -54,6 +54,11 @@ public class StartActivity extends AppCompatActivity {
         return toScreenShotInformationActivity;
     }
 
+    private int getTimePeriodValue() {
+        EditText timePeriodEditText = getTimePeriodEditText();
+        return Integer.parseInt(timePeriodEditText.getText().toString());
+    }
+
     private int getTimeUnitValue() {
         Spinner spinner = getTimeUnitSpinner();
         return spinner.getSelectedItemPosition();
@@ -63,10 +68,6 @@ public class StartActivity extends AppCompatActivity {
         return findViewById(R.id.time_unit_spinner);
     }
 
-    private int getTimePeriodValue() {
-        EditText timePeriodEditText = getTimePeriodEditText();
-        return Integer.parseInt(timePeriodEditText.getText().toString());
-    }
 
     private EditText getTimePeriodEditText() {
         return findViewById(R.id.time_period_edit_text);
