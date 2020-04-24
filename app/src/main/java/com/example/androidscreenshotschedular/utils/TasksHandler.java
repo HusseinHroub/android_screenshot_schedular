@@ -18,12 +18,9 @@ public class TasksHandler extends Handler {
         forRepetitionTask = new Runnable() {
             @Override
             public void run() {
-
                 runnable.run();
                 HelperUtil.printLog("TasksHandler.run: nice finished okay wonderful repeating");
                 postDelayed(this, timeInMilliSeconds);
-
-
             }
         };
         postDelayed(forRepetitionTask, timeInMilliSeconds);
