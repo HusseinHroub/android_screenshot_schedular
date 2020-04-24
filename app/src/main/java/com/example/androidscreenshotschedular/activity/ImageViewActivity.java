@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.androidscreenshotschedular.R;
-import com.example.androidscreenshotschedular.utils.BitMapReading;
+import com.example.androidscreenshotschedular.utils.bitmap.BitMapReading;
 import com.example.androidscreenshotschedular.utils.Constants;
 import com.github.chrisbanes.photoview.PhotoView;
 

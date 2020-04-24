@@ -1,7 +1,9 @@
-package com.example.androidscreenshotschedular.utils;
+package com.example.androidscreenshotschedular.utils.bitmap;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
+
+import com.example.androidscreenshotschedular.utils.Constants;
 
 import java.io.File;
 import java.io.FileNotFoundException;

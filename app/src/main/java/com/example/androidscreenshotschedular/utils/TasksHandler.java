@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 public class TasksHandler extends Handler {
-    private Runnable t;
+    private Runnable forRepetitionTask;
 
     public TasksHandler(Looper looper) {
         super(looper);
@@ -15,22 +15,22 @@ public class TasksHandler extends Handler {
     }
 
     public void postTaskEach(final Runnable runnable, final long timeInMilliSeconds) {
-        t = new Runnable() {
+        forRepetitionTask = new Runnable() {
             @Override
             public void run() {
 
                 runnable.run();
-                HelperUtil.printLog("TasksHandler.run: nice finished okay wonderful repeating");//TODO remove
+                HelperUtil.printLog("TasksHandler.run: nice finished okay wonderful repeating");
                 postDelayed(this, timeInMilliSeconds);
 
 
             }
         };
-        postDelayed(t, timeInMilliSeconds);
+        postDelayed(forRepetitionTask, timeInMilliSeconds);
     }
 
     public void stopRepetitiveTask() {
-        removeCallbacks(t);
+        removeCallbacks(forRepetitionTask);
     }
 
 }

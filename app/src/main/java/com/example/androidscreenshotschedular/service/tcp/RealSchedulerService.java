@@ -1,4 +1,4 @@
-package com.example.androidscreenshotschedular.service.real;
+package com.example.androidscreenshotschedular.service.tcp;
 
 import com.example.androidscreenshotschedular.action.ConnectionAcknowledgment;
 import com.example.androidscreenshotschedular.service.SchedulerService;

@@ -8,7 +8,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.androidscreenshotschedular.R;
-import com.example.androidscreenshotschedular.service.real.ServerSearchService;
+import com.example.androidscreenshotschedular.service.udp.ServerSearchService;
 import com.example.androidscreenshotschedular.utils.HelperUtil;
 
 import java.net.SocketException;

@@ -1,4 +1,4 @@
-package com.example.androidscreenshotschedular.service.real;
+package com.example.androidscreenshotschedular.service.tcp;
 
 
 import android.graphics.Bitmap;
@@ -8,7 +8,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 
 import com.example.androidscreenshotschedular.action.ConnectionAcknowledgment;
-import com.example.androidscreenshotschedular.utils.BitMapSaving;
+import com.example.androidscreenshotschedular.utils.bitmap.BitMapSaving;
 import com.example.androidscreenshotschedular.utils.Constants;
 import com.example.androidscreenshotschedular.utils.HelperUtil;
 import com.example.androidscreenshotschedular.utils.TasksHandler;

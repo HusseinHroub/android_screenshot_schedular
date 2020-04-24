@@ -1,4 +1,4 @@
-package com.example.androidscreenshotschedular.service.real;
+package com.example.androidscreenshotschedular.service.udp;
 
 import android.content.Context;
 import android.os.Handler;

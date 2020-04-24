@@ -12,7 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import com.example.androidscreenshotschedular.R;
 import com.example.androidscreenshotschedular.activity.ImageViewActivity;
-import com.example.androidscreenshotschedular.utils.BitMapReading;
+import com.example.androidscreenshotschedular.utils.bitmap.BitMapReading;
 import com.example.androidscreenshotschedular.utils.Cache;
 import com.example.androidscreenshotschedular.utils.Constants;
 import com.example.androidscreenshotschedular.utils.HelperUtil;

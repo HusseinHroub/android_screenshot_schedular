@@ -2,7 +2,7 @@ package com.example.androidscreenshotschedular.service.factory;
 
 import com.example.androidscreenshotschedular.action.ConnectionAcknowledgment;
 import com.example.androidscreenshotschedular.service.SchedulerService;
-import com.example.androidscreenshotschedular.service.real.RealSchedulerService;
+import com.example.androidscreenshotschedular.service.tcp.RealSchedulerService;
 import com.example.androidscreenshotschedular.utils.TimesConfiguration;
 
 public class ScreenShotSchedulerFactory {

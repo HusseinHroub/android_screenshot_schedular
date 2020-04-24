@@ -1,4 +1,4 @@
-package com.example.androidscreenshotschedular.utils;
+package com.example.androidscreenshotschedular.utils.bitmap;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
