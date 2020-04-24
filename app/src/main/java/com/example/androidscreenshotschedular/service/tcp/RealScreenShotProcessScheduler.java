@@ -8,10 +8,10 @@ import android.os.HandlerThread;
 import android.os.Looper;
 
 import com.example.androidscreenshotschedular.action.ConnectionAcknowledgment;
-import com.example.androidscreenshotschedular.utils.bitmap.BitMapSaving;
 import com.example.androidscreenshotschedular.utils.Constants;
 import com.example.androidscreenshotschedular.utils.HelperUtil;
 import com.example.androidscreenshotschedular.utils.TasksHandler;
+import com.example.androidscreenshotschedular.utils.bitmap.BitMapSaving;
 
 import org.apache.commons.io.IOUtils;
 
@@ -130,20 +130,27 @@ public class RealScreenShotProcessScheduler {
     }
 
     public void stop() {
+        stopHandlerThread();
+        closeClientSocket();
+    }
+
+    private void closeClientSocket() {
+        if (clientSocket != null) {
+            try {
+                clientSocket.close();
+                clientSocket = null;
+                HelperUtil.printLog("RealScreenShotProcessScheduler.stop closed client socket");//TODO remove
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void stopHandlerThread() {
         if (handlerThread != null) {
             handlerThread.quit();
             handlerThread = null;
             HelperUtil.printLog("RealScreenShotProcessScheduler.stop thread stopped");//TODO remove
-        }
-
-        if (clientSocket != null) {
-            try {
-                clientSocket.close();
-                HelperUtil.printLog("RealScreenShotProcessScheduler.stop closed client socket");//TODO remove
-                clientSocket = null;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
