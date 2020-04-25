@@ -3,6 +3,7 @@ package com.example.androidscreenshotschedular.utils.bitmap;
 import android.graphics.Bitmap;
 import android.os.Environment;
 
+import com.example.androidscreenshotschedular.action.BitMapAcknowledgment;
 import com.example.androidscreenshotschedular.utils.Constants;
 
 import java.io.File;
@@ -15,9 +16,16 @@ import java.util.Date;
 public class BitMapSaving {
 
     public static void saveBitMap(Bitmap bitmap) {
+        saveBitMap(bitmap, null);
+    }
+
+    public static void saveBitMap(Bitmap bitmap, BitMapAcknowledgment bitMapAcknowledgment) {
         File rootSavingPath = makeAndGetRootSavingPath();
         File ourImage = new File(rootSavingPath, getImageNameBasedOnDate());
         writeBitMapToOurImage(bitmap, ourImage);
+        if (bitMapAcknowledgment != null) {
+            bitMapAcknowledgment.onBitMapSaved(ourImage);
+        }
     }
 
     private static String getImageNameBasedOnDate() {

@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.DisplayMetrics;
+import android.view.View;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,18 +15,25 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidscreenshotschedular.R;
 import com.example.androidscreenshotschedular.action.ConnectionAcknowledgment;
-import com.example.androidscreenshotschedular.adapter.ImagesAdapter;
+import com.example.androidscreenshotschedular.adapter.ScreenShotAdapter;
+import com.example.androidscreenshotschedular.animation.ZoomInAnimator;
 import com.example.androidscreenshotschedular.service.factory.ScreenShotSchedulerFactory;
 import com.example.androidscreenshotschedular.utils.Constants;
 import com.example.androidscreenshotschedular.utils.HelperUtil;
 import com.example.androidscreenshotschedular.utils.TimesConfiguration;
+import com.example.androidscreenshotschedular.utils.bitmap.BitMapReading;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ScreenShotsInformationActivity extends AppCompatActivity implements ConnectionAcknowledgment {
+public class ScreenShotsInformationActivity extends AppCompatActivity
+        implements ConnectionAcknowledgment {
 
     private TimesConfiguration timesConfiguration;
     private TextView takenScreenShotTextView;
+    private int counter;
+    private ScreenShotAdapter screenShotAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +69,39 @@ public class ScreenShotsInformationActivity extends AppCompatActivity implements
 
     private void initializeGridViewImage() {
         GridView gridView = findViewById(R.id.image_grid_view);
-        gridView.setAdapter(new ImagesAdapter(this, getScreenShotFiles()));
+        screenShotAdapter = new ScreenShotAdapter(this, getScreenShotPaths(), this::onScreenShotClick);
+        gridView.setAdapter(screenShotAdapter);
+
+
     }
 
-    private File[] getScreenShotFiles() {
+    public void onScreenShotClick(ImageView screenShot, String screenShotPath) {
+        View container = findViewById(R.id.container);
+        ImageView fullSizeScreenShot = findViewById(R.id.full_size_screenshot_image);
+        DisplayMetrics displayMetrics = getDisplayPhoneScreenMetrics();
+        fullSizeScreenShot.setImageBitmap(new BitMapReading(displayMetrics.heightPixels,
+                displayMetrics.widthPixels).decodeImageFromLocation(screenShotPath));
+        new ZoomInAnimator(screenShot, fullSizeScreenShot, container, this).zoomInToBiggerImage();
+    }
+
+    private DisplayMetrics getDisplayPhoneScreenMetrics() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics;
+    }
+
+
+    private List<String> getScreenShotPaths() {
         File screenShotsDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), Constants.PC_SCREEN_SHOT_DIR);
-        File[] listOfImages = screenShotsDir.listFiles();
-        return listOfImages == null ? new File[]{} : listOfImages;
+        File[] listOfScreenShotFiles = screenShotsDir.listFiles();
+        List<String> screenShotPaths = new ArrayList<>();
+        if (listOfScreenShotFiles != null) {
+            for (File screenShotFile : listOfScreenShotFiles) {
+                screenShotPaths.add(screenShotFile.getAbsolutePath());
+            }
+        }
+        return screenShotPaths;
     }
 
     @Override
@@ -89,8 +124,10 @@ public class ScreenShotsInformationActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onScreenShotTaken(int numberOfScreenShots) {
-        takenScreenShotTextView.setText("" + numberOfScreenShots);
+    public void onScreenShotTaken(File imageFile) {
+        screenShotAdapter.addImageAbsolutePath(imageFile.getAbsolutePath());
+        counter++;
+        takenScreenShotTextView.setText("" + counter);
     }
 
     private void startConnectionActivity() {

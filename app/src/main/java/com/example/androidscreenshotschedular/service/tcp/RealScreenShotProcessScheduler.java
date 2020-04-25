@@ -15,6 +15,7 @@ import com.example.androidscreenshotschedular.utils.bitmap.BitMapSaving;
 
 import org.apache.commons.io.IOUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,7 +27,6 @@ public class RealScreenShotProcessScheduler {
     private long timeInMilliSeconds;
     private HandlerThread handlerThread;
     private ConnectionAcknowledgment connectionAcknowledgment;
-    private int counter;
     private Handler mainUiHandler;
     private Socket clientSocket;
     private TasksHandler postTasksHandler;
@@ -76,8 +76,7 @@ public class RealScreenShotProcessScheduler {
             try {
                 HelperUtil.printLog("RealScreenShotProcessScheduler.run: Okay so posting task each");//TODO remove
                 sendRequestForScreenShot();
-                BitMapSaving.saveBitMap(getPcScreenShotBitMap());
-                sendFeedBackToMainUI();
+                BitMapSaving.saveBitMap(getPcScreenShotBitMap(), (this::sendTakenScreenShotFeedBack));
             } catch (IOException e) {
                 e.printStackTrace();
                 manageFailConnection();
@@ -117,11 +116,6 @@ public class RealScreenShotProcessScheduler {
                 ((lenBytes[1] & 0xff) << 8) | (lenBytes[0] & 0xff);
     }
 
-    private void sendFeedBackToMainUI() {
-        counter++;
-        mainUiHandler.post(() -> connectionAcknowledgment.onScreenShotTaken(counter));
-    }
-
     private void manageFailConnection() {
         mainUiHandler.post(() -> connectionAcknowledgment.onConnectionFail());
         stop();
@@ -153,4 +147,9 @@ public class RealScreenShotProcessScheduler {
             HelperUtil.printLog("RealScreenShotProcessScheduler.stop thread stopped");//TODO remove
         }
     }
+
+    private void sendTakenScreenShotFeedBack(File bitMapFile) {
+        mainUiHandler.post(() -> connectionAcknowledgment.onScreenShotTaken(bitMapFile));
+    }
+
 }

@@ -1,33 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.ScreenShotsInformationActivity">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activity.ScreenShotsInformationActivity" android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <TextView
-            android:text="@string/number_of_screenshots_taken"
+        <TextView
+            android:id="@+id/textView3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/textView3"/>
-    <TextView
+            android:layout_height="wrap_content"
+            android:text="@string/number_of_screenshots_taken" />
+
+        <TextView
+            android:id="@+id/taken_screen_shots_counter_text_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/taken_screen_shots_counter_text_view"
-            android:text="@string/default_number_of_photos_taken"/>
-    <TextView
-            android:text="Available screen shots"
+            android:layout_height="wrap_content"
+            android:text="@string/default_number_of_photos_taken" />
+
+        <TextView
+            android:id="@+id/textView4"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/textView4" android:paddingLeft="10dp"/>
-    <GridView
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:text="Available screen shots" />
+
+        <GridView
+            android:id="@+id/image_grid_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/image_grid_view"
-            android:numColumns="auto_fit"
             android:columnWidth="90dp"
-            android:horizontalSpacing="10dp"
-            android:verticalSpacing="10dp"
             android:gravity="center"
+            android:horizontalSpacing="10dp"
+            android:numColumns="auto_fit"
+            android:verticalSpacing="10dp"
 
-    />
-</LinearLayout>
+            />
+    </LinearLayout>
+
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/full_size_screenshot_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+</FrameLayout>

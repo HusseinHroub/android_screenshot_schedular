@@ -16,7 +16,6 @@ public class ImageViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_view);
         DisplayMetrics displayMetrics = getDisplayPhoneScreenMetrics();
         setupPhotoView(displayMetrics.heightPixels, displayMetrics.widthPixels);
-
     }
 
     private DisplayMetrics getDisplayPhoneScreenMetrics() {
