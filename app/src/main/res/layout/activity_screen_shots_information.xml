@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+    android:id="@+id/root_container_frame_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.ScreenShotsInformationActivity">
@@ -43,6 +43,13 @@
 
             />
     </LinearLayout>
+
+    <View
+        android:id="@+id/background_layer_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@color/black" />
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/full_size_screenshot_image"

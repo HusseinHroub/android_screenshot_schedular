@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class RealScreenShotProcessScheduler {
+public class ScreenShotProcessScheduler {
     private static final int CONNECTION_TIME_OUT = 4000;
     private long timeInMilliSeconds;
     private HandlerThread handlerThread;
@@ -31,7 +31,7 @@ public class RealScreenShotProcessScheduler {
     private Socket clientSocket;
     private TasksHandler postTasksHandler;
 
-    public RealScreenShotProcessScheduler(long timeInMilliSecond, ConnectionAcknowledgment connectionAcknowledgment) {
+    public ScreenShotProcessScheduler(long timeInMilliSecond, ConnectionAcknowledgment connectionAcknowledgment) {
         this.timeInMilliSeconds = timeInMilliSecond;
         this.connectionAcknowledgment = connectionAcknowledgment;
         mainUiHandler = new Handler(Looper.getMainLooper());
@@ -128,6 +128,14 @@ public class RealScreenShotProcessScheduler {
         closeClientSocket();
     }
 
+    private void stopHandlerThread() {
+        if (handlerThread != null) {
+            handlerThread.quit();
+            handlerThread = null;
+            HelperUtil.printLog("RealScreenShotProcessScheduler.stop thread stopped");//TODO remove
+        }
+    }
+
     private void closeClientSocket() {
         if (clientSocket != null) {
             try {
@@ -137,14 +145,6 @@ public class RealScreenShotProcessScheduler {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    private void stopHandlerThread() {
-        if (handlerThread != null) {
-            handlerThread.quit();
-            handlerThread = null;
-            HelperUtil.printLog("RealScreenShotProcessScheduler.stop thread stopped");//TODO remove
         }
     }
 

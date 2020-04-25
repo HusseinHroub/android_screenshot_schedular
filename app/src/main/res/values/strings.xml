@@ -3,7 +3,7 @@
     <string name="for_each">For each</string>
     <string name="take_and_save_screen_shots">Take and save screen shots</string>
     <string name="start">Start</string>
-    <string name="default_number_value">1</string>
+    <string name="default_number_value">30</string>
     <string name="number_of_screenshots_taken">Number of screenshots taken</string>
     <string name="default_number_of_photos_taken">0</string>
     <string name="show_screen_shots_directory">Show screen shots directory</string>

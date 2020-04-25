@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.androidscreenshotschedular.R;
 import com.example.androidscreenshotschedular.action.ConnectionAcknowledgment;
 import com.example.androidscreenshotschedular.adapter.ScreenShotAdapter;
-import com.example.androidscreenshotschedular.animation.ZoomInAnimator;
+import com.example.androidscreenshotschedular.animation.ZoomAnimator;
 import com.example.androidscreenshotschedular.service.factory.ScreenShotSchedulerFactory;
 import com.example.androidscreenshotschedular.utils.Constants;
 import com.example.androidscreenshotschedular.utils.HelperUtil;
@@ -34,15 +34,27 @@ public class ScreenShotsInformationActivity extends AppCompatActivity
     private TextView takenScreenShotTextView;
     private int counter;
     private ScreenShotAdapter screenShotAdapter;
+    private ZoomAnimator zoomAnimator;
+    private View rootContainer;
+    private View blackBackgroundLayerView;
+    private ImageView fullSizeScreenShot;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_shots_information);
-        takenScreenShotTextView = getTakenScreenShotsCounterTextView();
+        initViews();
         prepareTimesConfiguration();
         initializeGridViewImage();
         startScreenShotSchedulerService();
+    }
+
+    private void initViews() {
+        rootContainer = findViewById(R.id.root_container_frame_layout);
+        blackBackgroundLayerView = findViewById(R.id.background_layer_view);
+        fullSizeScreenShot = findViewById(R.id.full_size_screenshot_image);
+        takenScreenShotTextView = getTakenScreenShotsCounterTextView();
     }
 
     private void prepareTimesConfiguration() {
@@ -76,12 +88,23 @@ public class ScreenShotsInformationActivity extends AppCompatActivity
     }
 
     public void onScreenShotClick(ImageView screenShot, String screenShotPath) {
-        View container = findViewById(R.id.container);
-        ImageView fullSizeScreenShot = findViewById(R.id.full_size_screenshot_image);
+        loadFullScreenShot(screenShotPath);
+        initZoomAnimator(screenShot);
+        zoomAnimator.zoomIn();
+    }
+
+    private void loadFullScreenShot(String screenShotPath) {
         DisplayMetrics displayMetrics = getDisplayPhoneScreenMetrics();
         fullSizeScreenShot.setImageBitmap(new BitMapReading(displayMetrics.heightPixels,
                 displayMetrics.widthPixels).decodeImageFromLocation(screenShotPath));
-        new ZoomInAnimator(screenShot, fullSizeScreenShot, container, this).zoomInToBiggerImage();
+    }
+
+    private void initZoomAnimator(ImageView screenShot) {
+        zoomAnimator = new ZoomAnimator(screenShot,
+                fullSizeScreenShot,
+                blackBackgroundLayerView,
+                rootContainer,
+                this);
     }
 
     private DisplayMetrics getDisplayPhoneScreenMetrics() {
@@ -89,7 +112,6 @@ public class ScreenShotsInformationActivity extends AppCompatActivity
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         return displayMetrics;
     }
-
 
     private List<String> getScreenShotPaths() {
         File screenShotsDir = new File(Environment.getExternalStoragePublicDirectory(
@@ -105,13 +127,6 @@ public class ScreenShotsInformationActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onDestroy() {
-        HelperUtil.printLog("ScreenShotsInformationActivity.destroy");
-        ScreenShotSchedulerFactory.closeProcessor();
-        super.onDestroy();
-    }
-
-    @Override
     public Context getContext() {
         return this;
     }
@@ -123,6 +138,11 @@ public class ScreenShotsInformationActivity extends AppCompatActivity
         startConnectionActivity();
     }
 
+    private void startConnectionActivity() {
+        startActivity(new Intent(this, ConnectionActivity.class));
+        finishAffinity();
+    }
+
     @Override
     public void onScreenShotTaken(File imageFile) {
         screenShotAdapter.addImageAbsolutePath(imageFile.getAbsolutePath());
@@ -130,8 +150,21 @@ public class ScreenShotsInformationActivity extends AppCompatActivity
         takenScreenShotTextView.setText("" + counter);
     }
 
-    private void startConnectionActivity() {
-        startActivity(new Intent(this, ConnectionActivity.class));
-        finishAffinity();
+    @Override
+    public void onBackPressed() {
+        if (zoomAnimator != null) {
+            zoomAnimator.zoomOut();
+            zoomAnimator = null;
+            return;
+        }
+        super.onBackPressed();
     }
+
+    @Override
+    protected void onDestroy() {
+        HelperUtil.printLog("ScreenShotsInformationActivity.destroy");
+        ScreenShotSchedulerFactory.closeProcessor();
+        super.onDestroy();
+    }
+
 }

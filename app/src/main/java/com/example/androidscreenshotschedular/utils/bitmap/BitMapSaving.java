@@ -44,7 +44,7 @@ public class BitMapSaving {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(image);
             ourTestImageBitMap.compress(Bitmap.CompressFormat.PNG, 85, fileOutputStream);
-            cleanOutPutStream(fileOutputStream);
+            cleanOutputStream(fileOutputStream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -52,7 +52,7 @@ public class BitMapSaving {
         }
     }
 
-    private static void cleanOutPutStream(FileOutputStream fileOutputStream) throws IOException {
+    private static void cleanOutputStream(FileOutputStream fileOutputStream) throws IOException {
         fileOutputStream.flush();
         fileOutputStream.close();
     }

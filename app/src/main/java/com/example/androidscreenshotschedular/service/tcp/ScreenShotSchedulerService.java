@@ -5,8 +5,8 @@ import com.example.androidscreenshotschedular.service.SchedulerService;
 import com.example.androidscreenshotschedular.utils.Constants;
 import com.example.androidscreenshotschedular.utils.TimesConfiguration;
 
-public class RealSchedulerService implements SchedulerService {
-    private RealScreenShotProcessScheduler realScreenShotProcessScheduler;
+public class ScreenShotSchedulerService implements SchedulerService {
+    private ScreenShotProcessScheduler screenShotProcessScheduler;
     private ConnectionAcknowledgment connectionAcknowledgment;
 
 
@@ -24,13 +24,13 @@ public class RealSchedulerService implements SchedulerService {
 
     private void takeScreenShotEach(long timeInMillieSeconds) {
         stopProcessIfNotNull();
-        realScreenShotProcessScheduler = new RealScreenShotProcessScheduler(timeInMillieSeconds, connectionAcknowledgment);
-        realScreenShotProcessScheduler.start();
+        screenShotProcessScheduler = new ScreenShotProcessScheduler(timeInMillieSeconds, connectionAcknowledgment);
+        screenShotProcessScheduler.start();
     }
 
     private void stopProcessIfNotNull() {
-        if (realScreenShotProcessScheduler != null)
-            realScreenShotProcessScheduler.stop();
+        if (screenShotProcessScheduler != null)
+            screenShotProcessScheduler.stop();
     }
 
     private long getTimeInMillieSeconds(TimesConfiguration timesConfiguration) {
